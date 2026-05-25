@@ -1,0 +1,1424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeRent Portal — Agent Rental Listing Portal1</title>
+  <meta name="description" content="Responsive rental listing portal for residential and commercial properties with galleries, virtual tours, floor plans, agent dashboard, admin controls, analytics and enquiry management." />
+  <meta name="theme-color" content="#1d4ed8" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg:#fbfbfd;
+      --surface:#ffffff;
+      --text:#0f172a;
+      --muted:#5b6476;
+      --line:#e7eaf2;
+      --primary:#1f4be3;
+      --primary-dark:#1437ac;
+      --navy:#071a44;
+      --soft-blue:#eef4ff;
+      --shadow:0 10px 30px rgba(16,24,40,.10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(29,78,216,.08), transparent 22%),
+        radial-gradient(circle at top right, rgba(251,191,36,.08), transparent 18%),
+        var(--bg);
+    }
+    a{text-decoration:none;color:inherit}
+    img{max-width:100%;display:block}
+    button,input,select,textarea{font:inherit}
+    .container{width:min(1240px,calc(100% - 32px));margin:auto}
+    .pill{border:1px solid var(--line);padding:12px 18px;border-radius:999px;background:#fff}
+    .btn{
+      border:none;border-radius:999px;padding:14px 24px;font-weight:700;cursor:pointer;transition:.25s ease;
+      display:inline-flex;align-items:center;justify-content:center;gap:10px
+    }
+    .btn-primary{background:linear-gradient(135deg,var(--primary),#315af0);color:#fff;box-shadow:0 12px 22px rgba(31,75,227,.25)}
+    .btn-primary:hover{transform:translateY(-1px);background:linear-gradient(135deg,#1841cf,#284fe0)}
+    .btn-outline{background:#fff;color:var(--navy);border:1px solid #cbd5e1}
+    .btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+    .section{padding:72px 0}
+    .section-title{font-size:2rem;line-height:1.1;margin:0 0 12px;font-weight:800}
+    .section-sub{color:var(--muted);margin:0 0 28px}
+    .card{
+      background:rgba(255,255,255,.92);
+      border:1px solid rgba(230,234,242,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    header{
+      position:sticky;top:0;z-index:50;background:rgba(255,255,255,.88);backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(231,234,242,.8)
+    }
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;height:78px;gap:16px
+    }
+    .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:1.8rem;color:#2445c2}
+    .brand img{width:120px;height:auto}
+    .nav-links,.nav-actions{display:flex;align-items:center;gap:8px}
+    .nav-links a{
+      padding:12px 14px;border-radius:999px;color:#0f172a;font-weight:500
+    }
+    .nav-links a:hover,.nav-links a.active{background:#f4f7ff;color:var(--primary)}
+    .mobile-toggle{display:none;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+    .mobile-menu{
+      display:none;padding:12px 0 18px;border-top:1px solid var(--line)
+    }
+    .mobile-menu.open{display:block}
+    .mobile-menu .stack{display:grid;gap:10px}
+    .mobile-menu a,.mobile-menu button{width:100%;justify-content:flex-start}
+
+    .hero{
+      position:relative;overflow:hidden;
+      background:url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1800&q=80') center/cover no-repeat;
+      min-height:640px;
+      display:flex;align-items:flex-start
+    }
+    .hero::before{
+      content:"";position:absolute;inset:0;
+      background:linear-gradient(90deg, rgba(255,255,255,.88) 0%, rgba(255,255,255,.74) 28%, rgba(255,255,255,.26) 58%, rgba(255,255,255,.1) 100%);
+    }
+    .hero-wrap{position:relative;z-index:1;padding:56px 0 24px;width:100%}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:start}
+    .hero-copy{padding:38px 8px 0 38px;max-width:650px}
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;
+      background:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.8);box-shadow:var(--shadow);font-weight:600;color:#1e3a8a
+    }
+    .hero h1{
+      font-size:clamp(2.6rem,5vw,5.2rem);line-height:.96;letter-spacing:-.04em;margin:18px 0 14px;font-weight:800;max-width:650px
+    }
+    .hero h1 .accent{color:var(--primary)}
+    .hero p{font-size:1.35rem;line-height:1.5;color:#263245;max-width:620px;margin:0 0 28px}
+    .hero-points{display:flex;flex-wrap:wrap;gap:12px}
+    .hero-points .pill{background:rgba(255,255,255,.82);backdrop-filter:blur(8px)}
+    .search-panel{
+      margin-top:22px;background:rgba(255,255,255,.96);padding:38px;border-radius:30px;box-shadow:0 24px 40px rgba(15,23,42,.12)
+    }
+    .tabs{display:flex;gap:20px;border-bottom:1px solid var(--line);margin-bottom:18px}
+    .tab{
+      background:none;border:none;padding:0 0 14px;cursor:pointer;font-weight:700;color:#667085;position:relative
+    }
+    .tab.active{color:var(--primary)}
+    .tab.active::after{
+      content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;border-radius:999px;background:var(--primary)
+    }
+    .search-grid{
+      display:grid;grid-template-columns:1.2fr 1.5fr 1fr 1.3fr 210px;gap:18px;align-items:end
+    }
+    .field label{display:block;font-weight:600;font-size:.95rem;margin:0 0 10px;color:#111827}
+    .field input,.field select{
+      width:100%;padding:15px 16px;border-radius:18px;border:1px solid #d7ddea;background:#fff;color:#111827;outline:none
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:#7aa2ff;box-shadow:0 0 0 4px rgba(37,99,235,.08)}
+    .range-wrap{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px
+    }
+    .range-note{font-size:.82rem;color:var(--muted);margin-top:8px}
+    .mini-stat{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px
+    }
+    .mini-stat .item{
+      padding:16px;border-radius:18px;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);
+      border:1px solid rgba(255,255,255,.76)
+    }
+    .mini-stat h4{margin:0;font-size:1.45rem}
+    .mini-stat p{margin:6px 0 0;font-size:.92rem;color:var(--muted)}
+
+    .category-grid{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:18px
+    }
+    .cat{
+      position:relative;padding:22px;background:linear-gradient(180deg,#f8fbff,#f4f8ff);overflow:hidden
+    }
+    .cat:nth-child(2){background:linear-gradient(180deg,#f4fff9,#eefaf2)}
+    .cat:nth-child(3){background:linear-gradient(180deg,#faf7ff,#f4f0ff)}
+    .cat:nth-child(4){background:linear-gradient(180deg,#fff9f3,#fff5ea)}
+    .cat:nth-child(5){background:linear-gradient(180deg,#fcfff4,#f8fde9)}
+    .cat-icon{
+      width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:#fff;border:1px solid rgba(0,0,0,.06);
+      margin-bottom:16px;color:var(--primary);box-shadow:0 8px 18px rgba(31,75,227,.08)
+    }
+    .cat h3{margin:0 0 6px;font-size:1.25rem}
+    .cat p{margin:0 0 10px;color:var(--muted);font-size:.94rem;line-height:1.5}
+    .cat .foot{display:flex;align-items:center;justify-content:space-between;font-weight:600;margin-top:10px}
+    .chips{display:flex;gap:12px;flex-wrap:wrap}
+    .chip{
+      display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow)
+    }
+
+    .feature-row{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:18px
+    }
+    .feature-item{display:flex;gap:14px;align-items:flex-start}
+    .feature-item .icon{
+      width:48px;height:48px;border-radius:14px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;flex:0 0 auto
+    }
+    .feature-item h4{margin:0 0 4px;font-size:1.1rem}
+    .feature-item p{margin:0;color:var(--muted)}
+
+    .listing-toolbar{
+      display:grid;grid-template-columns:1.3fr .8fr .9fr .9fr auto;gap:14px;align-items:end;margin-bottom:24px
+    }
+    .range-box{padding:14px 16px;border:1px solid var(--line);border-radius:18px;background:#fff}
+    .range-box output{font-weight:700;color:var(--primary)}
+    .slider-pair{position:relative;height:34px}
+    .slider-pair input[type=range]{
+      position:absolute;left:0;right:0;top:12px;width:100%;pointer-events:none;background:none;-webkit-appearance:none;appearance:none
+    }
+    .slider-pair input[type=range]::-webkit-slider-thumb{
+      pointer-events:auto;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--primary);border:3px solid #fff;box-shadow:0 4px 10px rgba(31,75,227,.2)
+    }
+    .slider-track{
+      position:absolute;left:0;right:0;top:19px;height:6px;border-radius:999px;background:#e7edf8
+    }
+    .slider-range{
+      position:absolute;height:6px;border-radius:999px;background:linear-gradient(90deg,#2f56ee,#6d8fff);top:19px
+    }
+
+    .listing-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:20px
+    }
+    .listing-card{overflow:hidden}
+    .listing-media{position:relative;height:240px;overflow:hidden}
+    .listing-media img{width:100%;height:100%;object-fit:cover;transition:transform .45s ease}
+    .listing-card:hover .listing-media img{transform:scale(1.06)}
+    .badge-row{position:absolute;left:14px;top:14px;display:flex;gap:8px;flex-wrap:wrap}
+    .badge{
+      background:rgba(255,255,255,.94);backdrop-filter:blur(8px);padding:8px 12px;border-radius:999px;font-size:.82rem;font-weight:700
+    }
+    .fav-btn{
+      position:absolute;right:14px;top:14px;width:42px;height:42px;border-radius:50%;border:none;background:rgba(255,255,255,.96);cursor:pointer;
+      box-shadow:var(--shadow)
+    }
+    .listing-body{padding:18px}
+    .listing-top{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}
+    .listing-title{font-size:1.14rem;font-weight:700;margin:0}
+    .listing-price{font-size:1.2rem;font-weight:800;color:var(--navy)}
+    .meta{display:flex;flex-wrap:wrap;gap:14px;color:#475569;font-size:.92rem;margin:10px 0 12px}
+    .listing-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .gallery{
+      display:flex;gap:8px;margin-top:12px;overflow:auto;padding-bottom:2px
+    }
+    .gallery img{
+      width:74px;height:56px;object-fit:cover;border-radius:12px;cursor:pointer;border:2px solid transparent
+    }
+    .gallery img.active{border-color:var(--primary)}
+    .empty-state{text-align:center;padding:42px 16px;color:var(--muted)}
+    .stats-strip{
+      padding:20px;border-radius:24px;background:linear-gradient(135deg,#0d1d4b,#1f4be3);color:#fff
+    }
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .stats-grid h3{margin:0;font-size:2rem}
+    .stats-grid p{margin:4px 0 0;color:rgba(255,255,255,.85)}
+
+    .content-split{
+      display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center
+    }
+    .media-stack{display:grid;grid-template-columns:1fr .82fr;gap:14px}
+    .media-stack img{height:100%;object-fit:cover;border-radius:22px}
+    .tour-box{padding:26px}
+    .checklist{display:grid;gap:12px;margin-top:18px}
+    .check{
+      display:flex;gap:10px;align-items:flex-start
+    }
+    .check i{
+      width:22px;height:22px;border-radius:50%;background:#eaf1ff;color:var(--primary);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:.85rem;flex:0 0 auto
+    }
+
+    .dashboard-wrap{
+      display:grid;grid-template-columns:290px 1fr;gap:22px
+    }
+    .dash-sidebar{padding:18px}
+    .dash-menu{display:grid;gap:8px}
+    .dash-link{
+      display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:16px;border:1px solid transparent;cursor:pointer;font-weight:600
+    }
+    .dash-link.active{background:#f4f7ff;border-color:#dce6ff;color:var(--primary)}
+    .dash-main{padding:20px}
+    .dash-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+    .dash-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+    .dash-card{padding:18px}
+    .dash-card p{margin:0;color:var(--muted)}
+    .dash-card h3{margin:8px 0 0;font-size:1.9rem}
+    .panel{display:none}
+    .panel.active{display:block}
+    .table{width:100%;border-collapse:collapse}
+    .table th,.table td{padding:14px;border-bottom:1px solid var(--line);text-align:left;font-size:.94rem}
+    .status{
+      display:inline-flex;padding:7px 12px;border-radius:999px;font-size:.8rem;font-weight:700
+    }
+    .status.approved{background:#eafaf1;color:#137a44}
+    .status.pending{background:#fff7e8;color:#b76b00}
+    .status.featured{background:#eef4ff;color:#1f4be3}
+    .status.removed{background:#fff0f0;color:#c83333}
+    .inline-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .small-btn{
+      border:none;background:#f6f8fc;border:1px solid var(--line);padding:9px 12px;border-radius:12px;cursor:pointer;font-weight:600
+    }
+    .small-btn:hover{border-color:#c9d7ff;color:var(--primary)}
+    .form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    .form-grid .full{grid-column:1/-1}
+    textarea{width:100%;padding:15px 16px;border-radius:18px;border:1px solid #d7ddea;min-height:120px;resize:vertical}
+    .notice{padding:14px 16px;border-radius:16px;background:#f6faff;border:1px solid #dbeafe;color:#1d4ed8;margin-bottom:14px}
+    .analytics-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:start}
+    .contact-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:24px}
+    .contact-box{padding:28px}
+    .contact-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+    .contact-cards .mini{padding:18px}
+    .footer{
+      background:#fff;border-top:1px solid var(--line);padding:54px 0 28px;margin-top:54px
+    }
+    .footer-grid{display:grid;grid-template-columns:1.2fr repeat(4,.8fr);gap:22px}
+    .footer h4{margin:0 0 14px}
+    .footer a{display:block;color:var(--muted);margin:10px 0}
+    .copy{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:24px;margin-top:24px;border-top:1px solid var(--line);color:var(--muted)}
+    .modal{
+      position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:16px
+    }
+    .modal.open{display:flex}
+    .modal-card{width:min(520px,100%);padding:26px}
+    .two-btns{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .muted{color:var(--muted)}
+    .schema-note{display:none}
+
+    @media (max-width:1120px){
+      .search-grid,.listing-toolbar{grid-template-columns:repeat(2,1fr)}
+      .feature-row,.dash-cards,.category-grid,.stats-grid,.contact-cards{grid-template-columns:repeat(2,1fr)}
+      .listing-grid{grid-template-columns:repeat(2,1fr)}
+      .hero-grid,.content-split,.analytics-grid,.contact-grid,.dashboard-wrap,.footer-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:860px){
+      .nav-links,.nav-actions{display:none}
+      .mobile-toggle{display:block}
+      .hero{min-height:auto}
+      .hero-wrap{padding:26px 0 18px}
+      .search-grid,.listing-toolbar,.feature-row,.listing-grid,.mini-stat,.stats-grid,.category-grid,.form-grid,.dash-cards,.contact-cards{grid-template-columns:1fr}
+      .range-wrap{grid-template-columns:1fr}
+      .hero p{font-size:1.06rem}
+      .hero h1{font-size:clamp(2.4rem,11vw,4rem)}
+      .search-panel{padding:18px;border-radius:24px}
+      .section{padding:56px 0}
+      .dash-main,.dash-sidebar,.contact-box,.tour-box{padding:18px}
+      .footer-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:560px){
+      .container{width:min(100% - 20px,1240px)}
+      .footer-grid{grid-template-columns:1fr}
+      .tabs{gap:14px}
+      .section-title{font-size:1.7rem}
+      .listing-media{height:210px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand" aria-label="WeRent home">
+        <img src="https://i.postimg.cc/2S4MH7pN/logo-removebg-preview.png" alt="WeRent logo">
+      </a>
+
+      <nav class="nav-links" aria-label="Main navigation">
+        <a class="active" href="#hero">Rent</a>
+        <a href="#categories">Commercial</a>
+        <a href="#listings">Industrial</a>
+        <a href="#dashboard">Agent Portal</a>
+        <a href="#resources">Resources</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button class="btn btn-outline" id="savedBtn">❤ Saved <span id="savedCount">0</span></button>
+        <button class="btn btn-outline" id="loginBtn">Log in</button>
+        <button class="btn btn-primary" id="signupBtn">Sign up</button>
+      </div>
+
+      <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">☰</button>
+    </div>
+    <div class="container mobile-menu" id="mobileMenu">
+      <div class="stack">
+        <a class="pill" href="#hero">Rent</a>
+        <a class="pill" href="#categories">Commercial</a>
+        <a class="pill" href="#listings">Industrial</a>
+        <a class="pill" href="#dashboard">Agent Portal</a>
+        <a class="pill" href="#resources">Resources</a>
+        <a class="pill" href="#contact">Contact</a>
+        <button class="btn btn-outline" id="mobileLogin">Log in</button>
+        <button class="btn btn-primary" id="mobileSignup">Sign up</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="container hero-wrap">
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Rental Listing Portal for agents & admins</div>
+            <h1>Where Australia <span class="accent">Leases.</span></h1>
+            <p>Residential and commercial rentals with rich photo galleries, virtual tours, floor plans, smart filters, enquiries, analytics and approval workflows.</p>
+
+            <div class="hero-points">
+              <div class="pill">Fast image loading</div>
+              <div class="pill">SEO-friendly property URLs</div>
+              <div class="pill">Schema-ready listings</div>
+              <div class="pill">Mobile-first design</div>
+            </div>
+
+            <div class="mini-stat">
+              <div class="item">
+                <h4>18.4k+</h4>
+                <p>Active rentals</p>
+              </div>
+              <div class="item">
+                <h4>1,250+</h4>
+                <p>Agents onboarded</p>
+              </div>
+              <div class="item">
+                <h4>96%</h4>
+                <p>Approval accuracy</p>
+              </div>
+              <div class="item">
+                <h4>24/7</h4>
+                <p>Enquiry intake</p>
+              </div>
+            </div>
+          </div>
+          <div></div>
+        </div>
+
+        <div class="search-panel card">
+          <div class="tabs">
+            <button class="tab active" data-mode="lease">For Lease</button>
+            <button class="tab" data-mode="rent">For Rent</button>
+          </div>
+          <div class="search-grid">
+            <div class="field">
+              <label for="searchType">What are you looking for?</label>
+              <select id="searchType">
+                <option value="all">All types</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="searchLocation">Location</label>
+              <input id="searchLocation" type="text" placeholder="Suburb, city or postcode" />
+            </div>
+            <div class="field">
+              <label for="searchSubType">Property type</label>
+              <select id="searchSubType">
+                <option value="all">Any</option>
+                <option value="Apartment">Apartment</option>
+                <option value="House">House</option>
+                <option value="Office">Office</option>
+                <option value="Warehouse">Warehouse</option>
+                <option value="Retail">Retail</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Price range</label>
+              <div class="range-wrap">
+                <select id="minPrice">
+                  <option value="0">Min price</option>
+                  <option value="300">300</option>
+                  <option value="500">500</option>
+                  <option value="800">800</option>
+                  <option value="1200">1200</option>
+                  <option value="2000">2000</option>
+                </select>
+                <select id="maxPrice">
+                  <option value="999999">Max price</option>
+                  <option value="800">800</option>
+                  <option value="1200">1200</option>
+                  <option value="2000">2000</option>
+                  <option value="3500">3500</option>
+                  <option value="8000">8000</option>
+                </select>
+              </div>
+            </div>
+            <button class="btn btn-primary" id="heroSearchBtn">🔎 Search</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="categories">
+      <div class="container">
+        <h2 class="section-title">Browse by category</h2>
+        <div class="category-grid">
+          <a href="#listings" class="card cat category-filter" data-category="Residential">
+            <div class="cat-icon">🏠</div>
+            <h3>Residential</h3>
+            <p>Houses, units, apartments and family-friendly rentals.</p>
+            <div class="foot"><span>12,458+ listings</span><span>→</span></div>
+          </a>
+          <a href="#listings" class="card cat category-filter" data-category="Commercial">
+            <div class="cat-icon">🏢</div>
+            <h3>Commercial</h3>
+            <p>Offices, medical suites, showrooms and mixed-use space.</p>
+            <div class="foot"><span>6,214+ listings</span><span>→</span></div>
+          </a>
+          <a href="#listings" class="card cat category-filter" data-category="Industrial">
+            <div class="cat-icon">🏭</div>
+            <h3>Industrial</h3>
+            <p>Warehouses, logistics hubs and manufacturing-ready units.</p>
+            <div class="foot"><span>4,892+ listings</span><span>→</span></div>
+          </a>
+          <a href="#listings" class="card cat category-filter" data-category="Retail">
+            <div class="cat-icon">🛍️</div>
+            <h3>Retail</h3>
+            <p>Shops, centres, kiosks and high-footfall lease options.</p>
+            <div class="foot"><span>2,731+ listings</span><span>→</span></div>
+          </a>
+          <a href="#listings" class="card cat category-filter" data-category="Rural">
+            <div class="cat-icon">🌿</div>
+            <h3>Rural</h3>
+            <p>Farms, grazing, orchards and flexible land opportunities.</p>
+            <div class="foot"><span>1,246+ listings</span><span>→</span></div>
+          </a>
+        </div>
+
+        <div style="margin-top:34px">
+          <h3 style="margin:0 0 16px;font-size:1.45rem">Popular searches</h3>
+          <div class="chips">
+            <button class="chip quick-search" data-query="house" data-type="Residential">🏡 Houses for rent</button>
+            <button class="chip quick-search" data-query="apartment" data-type="Residential">🏢 Apartments for rent</button>
+            <button class="chip quick-search" data-query="office" data-type="Commercial">🏬 Office space for lease</button>
+            <button class="chip quick-search" data-query="warehouse" data-type="Commercial">📦 Warehouses for lease</button>
+            <button class="chip quick-search" data-query="retail" data-type="Commercial">🛒 Retail space for lease</button>
+            <button class="chip quick-search" data-query="farm" data-type="Rural">🌱 Farms for lease</button>
+          </div>
+        </div>
+
+        <div class="feature-row">
+          <div class="feature-item">
+            <div class="icon">🔍</div>
+            <div><h4>Easy search</h4><p>Find the right property fast with location and price filters.</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="icon">☑️</div>
+            <div><h4>Verified listings</h4><p>Listings pass review before publishing for peace of mind.</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="icon">♡</div>
+            <div><h4>Save & compare</h4><p>Shortlist favourites and revisit properties later.</p></div>
+          </div>
+          <div class="feature-item">
+            <div class="icon">📝</div>
+            <div><h4>Apply online</h4><p>Secure enquiry and application flow for tenants and agents.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="listings">
+      <div class="container">
+        <div class="stats-strip card" style="margin-bottom:28px">
+          <div class="stats-grid">
+            <div><h3 id="countListings">0</h3><p>Searchable listings</p></div>
+            <div><h3>4K Ultra</h3><p>Photo galleries and fast lazy loading</p></div>
+            <div><h3>360°</h3><p>Interactive virtual tours supported</p></div>
+            <div><h3>PDF</h3><p>Printable floor plans and brochures</p></div>
+          </div>
+        </div>
+
+        <h2 class="section-title">Available rentals</h2>
+        <p class="section-sub">Explore residential and commercial units. Filter by city, neighbourhood, map-style area keywords, property type and min–max price.</p>
+
+        <div class="listing-toolbar">
+          <div class="field">
+            <label for="filterLocation">Location or area</label>
+            <input id="filterLocation" placeholder="Sydney, Docklands, Southbank, custom area..." />
+          </div>
+          <div class="field">
+            <label for="filterCategory">Category</label>
+            <select id="filterCategory">
+              <option value="all">All</option>
+              <option value="Residential">Residential</option>
+              <option value="Commercial">Commercial</option>
+              <option value="Industrial">Industrial</option>
+              <option value="Retail">Retail</option>
+              <option value="Rural">Rural</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filterSubtype">Property subtype</label>
+            <select id="filterSubtype">
+              <option value="all">Any</option>
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Office">Office</option>
+              <option value="Warehouse">Warehouse</option>
+              <option value="Retail">Retail</option>
+              <option value="Farm">Farm</option>
+            </select>
+          </div>
+          <div class="range-box">
+            <div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
+              <strong>Price / week</strong>
+              <output id="priceOutput">$300 – $8000</output>
+            </div>
+            <div class="slider-pair">
+              <div class="slider-track"></div>
+              <div class="slider-range" id="sliderRange"></div>
+              <input type="range" id="rangeMin" min="0" max="8000" step="100" value="300">
+              <input type="range" id="rangeMax" min="0" max="8000" step="100" value="8000">
+            </div>
+          </div>
+          <button class="btn btn-primary" id="clearFilters">Clear filters</button>
+        </div>
+
+        <div class="listing-grid" id="listingGrid"></div>
+        <div class="empty-state card" id="emptyState" style="display:none">No listings match your filters. Try a broader location or price range.</div>
+      </div>
+    </section>
+
+    <section class="section" id="resources">
+      <div class="container">
+        <div class="content-split">
+          <div class="media-stack">
+            <img src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80" alt="Modern living room">
+            <div style="display:grid;gap:14px">
+              <img src="https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=800&q=80" alt="Kitchen interior">
+              <img src="https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=800&q=80" alt="Office interior">
+            </div>
+          </div>
+          <div class="card tour-box">
+            <h2 class="section-title" style="margin-bottom:8px">Built for immersive property exploration</h2>
+            <p class="section-sub" style="margin-bottom:0">Each listing supports high-resolution photography, virtual tours, downloadable floor plans and direct enquiry management.</p>
+            <div class="checklist">
+              <div class="check"><i>✓</i><div><strong>Photo galleries</strong><br><span class="muted">Click thumbnails to preview room-by-room imagery.</span></div></div>
+              <div class="check"><i>✓</i><div><strong>Virtual tours</strong><br><span class="muted">Open 360° links in a new tab for self-guided walkthroughs.</span></div></div>
+              <div class="check"><i>✓</i><div><strong>Printable floor plans</strong><br><span class="muted">Download brochures and floor plans for inspections and planning.</span></div></div>
+              <div class="check"><i>✓</i><div><strong>SEO and schema</strong><br><span class="muted">Structured property data is included for search engine visibility.</span></div></div>
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px">
+              <a href="#dashboard" class="btn btn-primary">View Agent Dashboard</a>
+              <a href="#contact" class="btn btn-outline">Get in touch</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dashboard">
+      <div class="container">
+        <h2 class="section-title">Agent & admin dashboard</h2>
+        <p class="section-sub">Post new rentals, edit existing listings, track views, manage enquiries and control approval workflows.</p>
+
+        <div class="dashboard-wrap">
+          <aside class="card dash-sidebar">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <div style="width:54px;height:54px;border-radius:16px;background:#eef4ff;display:grid;place-items:center;font-size:1.4rem">👤</div>
+              <div>
+                <strong id="userRoleLabel">Guest preview</strong><br>
+                <span class="muted" id="userEmailLabel">Use demo login to manage listings</span>
+              </div>
+            </div>
+            <div class="dash-menu">
+              <button class="dash-link active" data-panel="overview">Overview <span>→</span></button>
+              <button class="dash-link" data-panel="myListings">My Listings <span>→</span></button>
+              <button class="dash-link" data-panel="newListing">Post New <span>→</span></button>
+              <button class="dash-link" data-panel="enquiries">Enquiries <span>→</span></button>
+              <button class="dash-link" data-panel="admin">Admin Controls <span>→</span></button>
+              <button class="dash-link" data-panel="analytics">Analytics <span>→</span></button>
+            </div>
+            <div style="margin-top:18px">
+              <button class="btn btn-primary" style="width:100%" id="demoLoginBtn">Demo Agent Login</button>
+            </div>
+          </aside>
+
+          <div class="card dash-main">
+            <div class="panel active" id="panel-overview">
+              <div class="dash-top">
+                <div>
+                  <h3 style="margin:0">Portal overview</h3>
+                  <p class="muted" style="margin:8px 0 0">Fast, responsive workflow for agents, admins and tenant enquiries.</p>
+                </div>
+                <button class="btn btn-outline" id="demoAdminBtn">Switch to Admin Demo</button>
+              </div>
+              <div class="dash-cards">
+                <div class="card dash-card"><p>Total listings</p><h3 id="dashTotalListings">0</h3></div>
+                <div class="card dash-card"><p>Pending approval</p><h3 id="dashPending">0</h3></div>
+                <div class="card dash-card"><p>Featured listings</p><h3 id="dashFeatured">0</h3></div>
+                <div class="card dash-card"><p>Open enquiries</p><h3 id="dashEnquiries">0</h3></div>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-myListings">
+              <div class="dash-top">
+                <h3 style="margin:0">Manage listings</h3>
+                <button class="btn btn-outline" id="exportJsonBtn">Export sample data</button>
+              </div>
+              <div class="notice">Agents can edit their listings; admins can approve, feature or remove them.</div>
+              <div style="overflow:auto">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Property</th>
+                      <th>Location</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                      <th>Views</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="dashboardTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-newListing">
+              <div class="dash-top">
+                <h3 style="margin:0">Create or edit listing</h3>
+                <span class="muted" id="formMode">New listing</span>
+              </div>
+              <form id="listingForm">
+                <div class="form-grid">
+                  <div class="field"><label>Title</label><input required id="fTitle" placeholder="e.g. Premium Docklands Office Suite"></div>
+                  <div class="field"><label>Slug / SEO URL</label><input required id="fSlug" placeholder="premium-docklands-office-suite"></div>
+                  <div class="field"><label>Category</label>
+                    <select id="fCategory" required>
+                      <option>Residential</option><option>Commercial</option><option>Industrial</option><option>Retail</option><option>Rural</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Subtype</label>
+                    <select id="fSubtype" required>
+                      <option>Apartment</option><option>House</option><option>Office</option><option>Warehouse</option><option>Retail</option><option>Farm</option>
+                    </select>
+                  </div>
+                  <div class="field"><label>Location</label><input required id="fLocation" placeholder="City, neighbourhood"></div>
+                  <div class="field"><label>Price / week</label><input required id="fPrice" type="number" min="0" placeholder="1200"></div>
+                  <div class="field"><label>Bedrooms</label><input id="fBeds" type="number" min="0" value="0"></div>
+                  <div class="field"><label>Bathrooms</label><input id="fBaths" type="number" min="0" value="0"></div>
+                  <div class="field full"><label>Description</label><textarea id="fDescription" placeholder="Brief property summary..."></textarea></div>
+                  <div class="field full"><label>Image URLs (comma separated)</label><input id="fImages" placeholder="https://..., https://..."></div>
+                  <div class="field"><label>Virtual tour URL</label><input id="fTour" placeholder="https://example.com/tour"></div>
+                  <div class="field"><label>Floor plan URL</label><input id="fPlan" placeholder="https://example.com/floorplan.pdf"></div>
+                </div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+                  <button class="btn btn-primary" type="submit">Save listing</button>
+                  <button class="btn btn-outline" type="button" id="resetFormBtn">Reset</button>
+                </div>
+              </form>
+            </div>
+
+            <div class="panel" id="panel-enquiries">
+              <div class="dash-top"><h3 style="margin:0">Tenant enquiries</h3></div>
+              <div style="overflow:auto">
+                <table class="table">
+                  <thead>
+                    <tr><th>Name</th><th>Property</th><th>Email</th><th>Message</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="enquiriesBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel" id="panel-admin">
+              <div class="dash-top"><h3 style="margin:0">Admin moderation</h3></div>
+              <div class="notice">Approve, feature or remove listings. Featured listings appear at the top of public results.</div>
+              <div id="adminModerationList"></div>
+            </div>
+
+            <div class="panel" id="panel-analytics">
+              <div class="dash-top"><h3 style="margin:0">Basic analytics</h3></div>
+              <div class="analytics-grid">
+                <div class="card" style="padding:18px"><canvas id="viewsChart" height="150"></canvas></div>
+                <div class="card" style="padding:18px"><canvas id="categoryChart" height="150"></canvas></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-grid">
+          <div class="card contact-box">
+            <h2 class="section-title">Get in touch</h2>
+            <p class="section-sub">Need deployment, source code handover, database schema, sample data and a short user guide? Send your project details and preferred hosting access.</p>
+
+            <div class="contact-cards">
+              <div class="card mini"><strong>Email</strong><p class="muted">hello@werentportal.com</p></div>
+              <div class="card mini"><strong>Phone</strong><p class="muted">+61 3 9000 2200</p></div>
+              <div class="card mini"><strong>Office</strong><p class="muted">Melbourne, Australia</p></div>
+            </div>
+
+            <div style="margin-top:20px">
+              <img style="border-radius:22px;height:280px;width:100%;object-fit:cover" src="https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80" alt="Property consultation">
+            </div>
+          </div>
+
+          <div class="card contact-box">
+            <form id="contactForm">
+              <div class="form-grid">
+                <div class="field"><label>Your name</label><input required id="cName" placeholder="Full name"></div>
+                <div class="field"><label>Email address</label><input required id="cEmail" type="email" placeholder="you@company.com"></div>
+                <div class="field"><label>Company</label><input id="cCompany" placeholder="Agency or business"></div>
+                <div class="field"><label>Project scope</label>
+                  <select id="cScope">
+                    <option>Full portal build</option>
+                    <option>Design + frontend</option>
+                    <option>Dashboard + admin tools</option>
+                    <option>Hosting deployment</option>
+                  </select>
+                </div>
+                <div class="field full"><label>Message</label><textarea required id="cMessage" placeholder="Tell us about your rental portal requirements, hosting, timeline and desired features."></textarea></div>
+              </div>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+                <button class="btn btn-primary" type="submit">Send message</button>
+                <a class="btn btn-outline" href="#dashboard">Explore dashboard</a>
+              </div>
+              <p class="muted" id="contactFeedback" style="margin-top:14px"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a class="brand" href="#" style="margin-bottom:12px;display:inline-flex"><img src="https://i.postimg.cc/2S4MH7pN/logo-removebg-preview.png" alt="WeRent logo"></a>
+          <p class="muted" style="max-width:420px">A modern agent rental listing portal for residential and commercial leasing with gallery-rich listings, virtual tours, floor plans, approvals and analytics.</p>
+        </div>
+        <div>
+          <h4>Portal</h4>
+          <a href="#listings">Search rentals</a>
+          <a href="#dashboard">Agent dashboard</a>
+          <a href="#dashboard">Admin controls</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div>
+          <h4>Features</h4>
+          <a href="#resources">Virtual tours</a>
+          <a href="#resources">Floor plans</a>
+          <a href="#resources">Schema markup</a>
+          <a href="#resources">SEO URLs</a>
+        </div>
+        <div>
+          <h4>Support</h4>
+          <a href="#">User guide</a>
+          <a href="#">Setup instructions</a>
+          <a href="#">Database schema</a>
+          <a href="#">Sample data</a>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <a href="#">Privacy policy</a>
+          <a href="#">Terms</a>
+          <a href="#">Cookies</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+      <div class="copy">
+        <div>© 2026 WeRent Portal. All rights reserved.Developed by Zannatul.</div>
+        <div>Responsive • SEO-ready • Mobile-first.</div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="modal" id="authModal">
+    <div class="modal-card card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px">
+        <h3 style="margin:0" id="authTitle">Log in</h3>
+        <button class="small-btn" id="closeModal">✕</button>
+      </div>
+      <form id="authForm">
+        <div class="field" style="margin-bottom:12px"><label>Email</label><input id="authEmail" type="email" required placeholder="agent@werentportal.com"></div>
+        <div class="field" style="margin-bottom:12px"><label>Password</label><input id="authPassword" type="password" required placeholder="Enter password"></div>
+        <div class="two-btns">
+          <button class="btn btn-primary" type="submit">Continue</button>
+          <button class="btn btn-outline" type="button" id="demoFillBtn">Use demo credentials</button>
+        </div>
+        <p class="muted" id="authFeedback" style="margin-top:12px"></p>
+      </form>
+    </div>
+  </div>
+
+  <script type="application/ld+json" id="schemaData">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "WeRent Rental Listings",
+    "itemListElement": []
+  }
+  </script>
+
+  <script>
+    const defaultListings = [
+      {
+        id:1,title:"Skyline Apartment with Balcony",slug:"skyline-apartment-with-balcony",category:"Residential",subtype:"Apartment",
+        location:"Sydney CBD, NSW",area:"CBD Harbour",price:980,beds:2,baths:2,views:245,status:"approved",featured:true,
+        description:"Bright apartment with skyline views, premium finishes and easy transport access.",
+        images:[
+          "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+        ],
+        tour:"https://example.com/tour/skyline",
+        floorplan:"https://example.com/floorplans/skyline.pdf"
+      },
+      {
+        id:2,title:"Premium Docklands Office Suite",slug:"premium-docklands-office-suite",category:"Commercial",subtype:"Office",
+        location:"Docklands, VIC",area:"Harbour Esplanade",price:2200,beds:0,baths:2,views:390,status:"featured",featured:true,
+        description:"Flexible office suite with meeting rooms, reception area and natural light.",
+        images:[
+          "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1497366412874-3415097a27e7?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1460317442991-0ec209397118?auto=format&fit=crop&w=1200&q=80"
+        ],
+        tour:"https://example.com/tour/docklands-office",
+        floorplan:"https://example.com/floorplans/docklands-office.pdf"
+      },
+      {
+        id:3,title:"Southbank Family Townhouse",slug:"southbank-family-townhouse",category:"Residential",subtype:"House",
+        location:"Southbank, VIC",area:"Arts Precinct",price:1350,beds:3,baths:2,views:187,status:"approved",featured:false,
+        description:"Modern townhouse with courtyard, designer kitchen and secure parking.",
+        images:[
+          "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80"
+        ],
+        tour:"https://example.com/tour/southbank-townhouse",
+        floorplan:"https://example.com/floorplans/southbank-townhouse.pdf"
+      },
+      {
+        id:4,title:"Western Logistics Warehouse",slug:"western-logistics-warehouse",category:"Industrial",subtype:"Warehouse",
+        location:"Truganina, VIC",area:"Western Freeway Corridor",price:4800,beds:0,baths:1,views:154,status:"pending",featured:false,
+        description:"High-clearance warehouse with container access, office pod and hardstand.",
+        images:[
+          "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=1200&q=80",
+         
+        ],
+        tour:"https://example.com/tour/logistics-warehouse",
+        floorplan:"https://example.com/floorplans/logistics-warehouse.pdf"
+      },
+      {
+        id:5,title:"High Street Retail Corner",slug:"high-street-retail-corner",category:"Retail",subtype:"Retail",
+        location:"Prahran, VIC",area:"High Street",price:3100,beds:0,baths:1,views:221,status:"approved",featured:false,
+        description:"Retail frontage with excellent exposure, rear storage and flexible fitout.",
+        images:[
+          "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?auto=format&fit=crop&w=1200&q=80"
+        ],
+        tour:"https://example.com/tour/high-street-retail",
+        floorplan:"https://example.com/floorplans/high-street-retail.pdf"
+      },
+      {
+        id:6,title:"Yarra Valley Orchard Lease",slug:"yarra-valley-orchard-lease",category:"Rural",subtype:"Farm",
+        location:"Yarra Valley, VIC",area:"Coldstream",price:1650,beds:2,baths:1,views:89,status:"approved",featured:false,
+        description:"Scenic rural lease with established orchard, storage shed and farmhouse.",
+        images:[
+          "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80"
+        ],
+        tour:"https://example.com/tour/yarra-orchard",
+        floorplan:"https://example.com/floorplans/yarra-orchard.pdf"
+      }
+    ];
+
+    const sampleEnquiries = [
+      {name:"Sophia Lee", property:"Skyline Apartment with Balcony", email:"sophia@email.com", message:"Interested in a Saturday inspection.", status:"Open"},
+      {name:"Marcus Tan", property:"Premium Docklands Office Suite", email:"marcus@brandco.com", message:"Can you share fitout dimensions?", status:"Open"},
+      {name:"Ava Smith", property:"Southbank Family Townhouse", email:"ava@email.com", message:"Is pet approval possible?", status:"Replied"}
+    ];
+
+    let listings = JSON.parse(localStorage.getItem("werent_listings") || "null") || defaultListings;
+    let saved = JSON.parse(localStorage.getItem("werent_saved") || "[]");
+    let authState = JSON.parse(localStorage.getItem("werent_auth") || "null") || {role:"Guest",email:"Use demo login to manage listings"};
+    let editId = null;
+
+    const listingGrid = document.getElementById("listingGrid");
+    const emptyState = document.getElementById("emptyState");
+    const priceOutput = document.getElementById("priceOutput");
+    const rangeMin = document.getElementById("rangeMin");
+    const rangeMax = document.getElementById("rangeMax");
+    const sliderRange = document.getElementById("sliderRange");
+
+    const filters = {
+      location:"",
+      category:"all",
+      subtype:"all",
+      min:300,
+      max:8000
+    };
+
+    function saveState(){
+      localStorage.setItem("werent_listings", JSON.stringify(listings));
+      localStorage.setItem("werent_saved", JSON.stringify(saved));
+      localStorage.setItem("werent_auth", JSON.stringify(authState));
+      document.getElementById("savedCount").textContent = saved.length;
+    }
+
+    function currency(v){ return "$" + Number(v).toLocaleString(); }
+
+    function updateSliderUI(){
+      let min = Math.min(+rangeMin.value, +rangeMax.value - 100);
+      let max = Math.max(+rangeMax.value, min + 100);
+      rangeMin.value = min; rangeMax.value = max;
+      filters.min = min; filters.max = max;
+      priceOutput.textContent = `${currency(min)} – ${currency(max)}`;
+      const minPct = (min / 8000) * 100;
+      const maxPct = (max / 8000) * 100;
+      sliderRange.style.left = minPct + "%";
+      sliderRange.style.right = (100 - maxPct) + "%";
+      renderListings();
+    }
+
+    function getFilteredListings(){
+      return listings
+        .filter(l => l.status !== "removed")
+        .filter(l => (filters.category === "all" || l.category === filters.category))
+        .filter(l => (filters.subtype === "all" || l.subtype === filters.subtype))
+        .filter(l => l.price >= filters.min && l.price <= filters.max)
+        .filter(l => {
+          if(!filters.location) return true;
+          const text = `${l.location} ${l.area} ${l.title} ${l.subtype}`.toLowerCase();
+          return text.includes(filters.location.toLowerCase());
+        })
+        .sort((a,b) => (b.featured - a.featured) || (b.views - a.views));
+    }
+
+    function renderListings(){
+      const visible = getFilteredListings();
+      listingGrid.innerHTML = "";
+      emptyState.style.display = visible.length ? "none" : "block";
+      document.getElementById("countListings").textContent = visible.length;
+
+      visible.forEach((l) => {
+        const isSaved = saved.includes(l.id);
+        const card = document.createElement("article");
+        card.className = "card listing-card";
+        card.innerHTML = `
+          <div class="listing-media">
+            <img src="${l.images[0]}" alt="${l.title}" loading="lazy">
+            <div class="badge-row">
+              <span class="badge">${l.category}</span>
+              <span class="badge">${l.subtype}</span>
+              ${l.featured ? '<span class="badge" style="color:#1f4be3">Featured</span>' : ''}
+            </div>
+            <button class="fav-btn" data-save="${l.id}" aria-label="Save listing">${isSaved ? "❤" : "♡"}</button>
+          </div>
+          <div class="listing-body">
+            <div class="listing-top">
+              <div>
+                <h3 class="listing-title">${l.title}</h3>
+                <div class="muted">${l.location}</div>
+              </div>
+              <div class="listing-price">${currency(l.price)}</div>
+            </div>
+            <div class="meta">
+              <span>📍 ${l.area}</span>
+              <span>👁 ${l.views}</span>
+              <span>🛏 ${l.beds}</span>
+              <span>🛁 ${l.baths}</span>
+            </div>
+            <p class="muted" style="margin:0">${l.description}</p>
+            <div class="gallery">
+              ${l.images.map((img,i)=>`<img src="${img}" class="${i===0?'active':''}" data-full="${img}" alt="${l.title} thumbnail" loading="lazy">`).join("")}
+            </div>
+            <div class="listing-actions" style="margin-top:14px">
+              <a class="btn btn-outline" target="_blank" href="${l.tour}">Virtual tour</a>
+              <a class="btn btn-outline" target="_blank" href="${l.floorplan}">Floor plan</a>
+              <button class="btn btn-primary enquire-btn" data-id="${l.id}">Enquire</button>
+            </div>
+          </div>
+        `;
+        listingGrid.appendChild(card);
+      });
+
+      document.querySelectorAll(".gallery").forEach(gallery => {
+        const mainImg = gallery.closest(".listing-card").querySelector(".listing-media img");
+        gallery.querySelectorAll("img").forEach(thumb => {
+          thumb.addEventListener("click", () => {
+            gallery.querySelectorAll("img").forEach(i => i.classList.remove("active"));
+            thumb.classList.add("active");
+            mainImg.src = thumb.dataset.full;
+          });
+        });
+      });
+
+      document.querySelectorAll("[data-save]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = +btn.dataset.save;
+          if(saved.includes(id)) saved = saved.filter(x => x !== id);
+          else saved.push(id);
+          saveState();
+          renderListings();
+        });
+      });
+
+      document.querySelectorAll(".enquire-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const item = listings.find(x => x.id === +btn.dataset.id);
+          document.getElementById("cMessage").value = `I'm interested in "${item.title}" at ${item.location}. Please share next steps and inspection times.`;
+          document.getElementById("contact").scrollIntoView({behavior:"smooth"});
+        });
+      });
+
+      renderDashboard();
+      updateSchema();
+    }
+
+    function updateSchema(){
+      const itemListElement = listings.slice(0,6).map((l,i)=>({
+        "@type":"ListItem",
+        "position": i+1,
+        "url": `https://example.com/properties/${l.slug}`,
+        "item":{
+          "@type":"Residence",
+          "name": l.title,
+          "description": l.description,
+          "image": l.images[0],
+          "address":{"@type":"PostalAddress","addressLocality": l.location},
+          "floorSize":{"@type":"QuantitativeValue","value": l.beds + l.baths, "unitCode":"EACH"},
+          "offers":{"@type":"Offer","price": l.price,"priceCurrency":"AUD"}
+        }
+      }));
+      document.getElementById("schemaData").textContent = JSON.stringify({
+        "@context":"https://schema.org",
+        "@type":"ItemList",
+        "name":"WeRent Rental Listings",
+        itemListElement
+      }, null, 2);
+    }
+
+    function renderDashboard(){
+      document.getElementById("dashTotalListings").textContent = listings.filter(l=>l.status!=="removed").length;
+      document.getElementById("dashPending").textContent = listings.filter(l=>l.status==="pending").length;
+      document.getElementById("dashFeatured").textContent = listings.filter(l=>l.featured && l.status!=="removed").length;
+      document.getElementById("dashEnquiries").textContent = sampleEnquiries.length;
+      document.getElementById("userRoleLabel").textContent = authState.role + " preview";
+      document.getElementById("userEmailLabel").textContent = authState.email;
+
+      const tbody = document.getElementById("dashboardTableBody");
+      tbody.innerHTML = listings.map(l => `
+        <tr>
+          <td>${l.title}</td>
+          <td>${l.location}</td>
+          <td>${currency(l.price)}</td>
+          <td><span class="status ${l.status}">${l.status}</span></td>
+          <td>${l.views}</td>
+          <td>
+            <div class="inline-actions">
+              <button class="small-btn edit-listing" data-id="${l.id}">Edit</button>
+              <button class="small-btn toggle-feature" data-id="${l.id}">${l.featured ? "Unfeature" : "Feature"}</button>
+              <button class="small-btn toggle-remove" data-id="${l.id}">${l.status==="removed" ? "Restore" : "Remove"}</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      const enquiriesBody = document.getElementById("enquiriesBody");
+      enquiriesBody.innerHTML = sampleEnquiries.map(e => `
+        <tr><td>${e.name}</td><td>${e.property}</td><td>${e.email}</td><td>${e.message}</td><td>${e.status}</td></tr>
+      `).join("");
+
+      const moderation = document.getElementById("adminModerationList");
+      moderation.innerHTML = listings.map(l => `
+        <div class="card" style="padding:16px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+            <div>
+              <strong>${l.title}</strong><br><span class="muted">${l.location} • ${l.category}</span>
+            </div>
+            <div class="inline-actions">
+              <button class="small-btn approve-btn" data-id="${l.id}">Approve</button>
+              <button class="small-btn feature-btn" data-id="${l.id}">${l.featured ? "Unfeature" : "Feature"}</button>
+              <button class="small-btn remove-btn" data-id="${l.id}">${l.status==="removed" ? "Restore" : "Remove"}</button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      bindDashboardActions();
+      renderCharts();
+      saveState();
+    }
+
+    let viewsChart, categoryChart;
+    function renderCharts(){
+      const ctx1 = document.getElementById("viewsChart");
+      const ctx2 = document.getElementById("categoryChart");
+
+      if(viewsChart) viewsChart.destroy();
+      if(categoryChart) categoryChart.destroy();
+
+      viewsChart = new Chart(ctx1, {
+        type:'bar',
+        data:{
+          labels:listings.map(l=>l.subtype),
+          datasets:[{
+            label:'Views',
+            data:listings.map(l=>l.views),
+            backgroundColor:'#2f56ee',
+            borderRadius:8
+          }]
+        },
+        options:{
+          responsive:true,
+          plugins:{legend:{display:false}},
+          scales:{y:{beginAtZero:true, grid:{color:'#eef2f7'}}, x:{grid:{display:false}}}
+        }
+      });
+
+      const counts = {};
+      listings.forEach(l=> counts[l.category] = (counts[l.category]||0)+1 );
+      categoryChart = new Chart(ctx2, {
+        type:'doughnut',
+        data:{
+          labels:Object.keys(counts),
+          datasets:[{
+            data:Object.values(counts),
+            backgroundColor:['#1f4be3','#22c55e','#8b5cf6','#f59e0b','#84cc16']
+          }]
+        },
+        options:{plugins:{legend:{position:'bottom'}}}
+      });
+    }
+
+    function bindDashboardActions(){
+      document.querySelectorAll(".edit-listing").forEach(btn => btn.onclick = () => fillForm(+btn.dataset.id));
+      document.querySelectorAll(".toggle-feature, .feature-btn").forEach(btn => btn.onclick = () => {
+        const item = listings.find(x=>x.id===+btn.dataset.id);
+        item.featured = !item.featured;
+        if(item.featured && item.status !== "removed") item.status = "featured";
+        if(!item.featured && item.status === "featured") item.status = "approved";
+        renderListings();
+      });
+      document.querySelectorAll(".toggle-remove, .remove-btn").forEach(btn => btn.onclick = () => {
+        const item = listings.find(x=>x.id===+btn.dataset.id);
+        item.status = item.status === "removed" ? "approved" : "removed";
+        renderListings();
+      });
+      document.querySelectorAll(".approve-btn").forEach(btn => btn.onclick = () => {
+        const item = listings.find(x=>x.id===+btn.dataset.id);
+        item.status = item.featured ? "featured" : "approved";
+        renderListings();
+      });
+    }
+
+    function fillForm(id){
+      const l = listings.find(x=>x.id===id);
+      if(!l) return;
+      editId = id;
+      document.getElementById("formMode").textContent = "Editing listing";
+      fTitle.value = l.title;
+      fSlug.value = l.slug;
+      fCategory.value = l.category;
+      fSubtype.value = l.subtype;
+      fLocation.value = l.location;
+      fPrice.value = l.price;
+      fBeds.value = l.beds;
+      fBaths.value = l.baths;
+      fDescription.value = l.description;
+      fImages.value = l.images.join(", ");
+      fTour.value = l.tour;
+      fPlan.value = l.floorplan;
+      switchPanel("newListing");
+      window.scrollTo({top:document.getElementById("dashboard").offsetTop - 90, behavior:"smooth"});
+    }
+
+    function resetForm(){
+      editId = null;
+      document.getElementById("formMode").textContent = "New listing";
+      document.getElementById("listingForm").reset();
+      fBeds.value = 0;
+      fBaths.value = 0;
+    }
+
+    function switchPanel(panel){
+      document.querySelectorAll(".dash-link").forEach(b=>b.classList.toggle("active", b.dataset.panel===panel));
+      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+      document.getElementById(`panel-${panel}`).classList.add("active");
+    }
+
+    document.querySelectorAll(".dash-link").forEach(btn => btn.addEventListener("click", ()=>switchPanel(btn.dataset.panel)));
+
+    document.getElementById("listingForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const payload = {
+        id: editId || Date.now(),
+        title: fTitle.value.trim(),
+        slug: fSlug.value.trim(),
+        category: fCategory.value,
+        subtype: fSubtype.value,
+        location: fLocation.value.trim(),
+        area: fLocation.value.split(",")[0].trim(),
+        price: +fPrice.value,
+        beds: +fBeds.value || 0,
+        baths: +fBaths.value || 0,
+        views: editId ? (listings.find(x=>x.id===editId)?.views || 0) : Math.floor(Math.random()*80)+20,
+        status: editId ? (listings.find(x=>x.id===editId)?.status || "pending") : "pending",
+        featured: editId ? (listings.find(x=>x.id===editId)?.featured || false) : false,
+        description: fDescription.value.trim() || "Well-presented rental listing with quality inclusions and strong location appeal.",
+        images: (fImages.value.trim() ? fImages.value.split(",").map(s=>s.trim()).filter(Boolean) : [
+          "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80",
+          "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=1200&q=80"
+        ]),
+        tour: fTour.value.trim() || "https://example.com/tour",
+        floorplan: fPlan.value.trim() || "https://example.com/floorplan.pdf"
+      };
+
+      if(editId){
+        listings = listings.map(l => l.id===editId ? payload : l);
+      } else {
+        listings.unshift(payload);
+      }
+      resetForm();
+      renderListings();
+      switchPanel("myListings");
+    });
+
+    document.getElementById("resetFormBtn").addEventListener("click", resetForm);
+
+    document.getElementById("heroSearchBtn").addEventListener("click", () => {
+      filters.category = searchType.value === "all" ? "all" : searchType.value;
+      filters.subtype = searchSubType.value;
+      filters.location = searchLocation.value.trim();
+      filters.min = +minPrice.value;
+      filters.max = +maxPrice.value;
+      filterCategory.value = filters.category;
+      filterSubtype.value = filters.subtype;
+      filterLocation.value = filters.location;
+      rangeMin.value = filters.min;
+      rangeMax.value = filters.max === 999999 ? 8000 : Math.min(filters.max, 8000);
+      updateSliderUI();
+      document.getElementById("listings").scrollIntoView({behavior:"smooth"});
+    });
+
+    filterLocation.addEventListener("input", e => { filters.location = e.target.value.trim(); renderListings(); });
+    filterCategory.addEventListener("change", e => { filters.category = e.target.value; renderListings(); });
+    filterSubtype.addEventListener("change", e => { filters.subtype = e.target.value; renderListings(); });
+    rangeMin.addEventListener("input", updateSliderUI);
+    rangeMax.addEventListener("input", updateSliderUI);
+
+    document.getElementById("clearFilters").addEventListener("click", () => {
+      filters.location = "";
+      filters.category = "all";
+      filters.subtype = "all";
+      filters.min = 300;
+      filters.max = 8000;
+      filterLocation.value = "";
+      filterCategory.value = "all";
+      filterSubtype.value = "all";
+      rangeMin.value = 300;
+      rangeMax.value = 8000;
+      updateSliderUI();
+    });
+
+    document.querySelectorAll(".category-filter").forEach(btn => btn.addEventListener("click", () => {
+      filters.category = btn.dataset.category;
+      filterCategory.value = filters.category;
+      renderListings();
+    }));
+
+    document.querySelectorAll(".quick-search").forEach(btn => btn.addEventListener("click", () => {
+      filters.location = btn.dataset.query;
+      filters.category = btn.dataset.type || "all";
+      filterLocation.value = filters.location;
+      filterCategory.value = filters.category;
+      renderListings();
+      document.getElementById("listings").scrollIntoView({behavior:"smooth"});
+    }));
+
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+      tab.classList.add("active");
+      document.querySelector(".hero h1").innerHTML = tab.dataset.mode === "lease" ? `Where Australia <span class="accent">Leases.</span>` : `Where Australia <span class="accent">Rents.</span>`;
+    }));
+
+    const authModal = document.getElementById("authModal");
+    const authTitle = document.getElementById("authTitle");
+    function openAuth(mode){
+      authTitle.textContent = mode;
+      authModal.classList.add("open");
+    }
+    function closeAuth(){ authModal.classList.remove("open"); }
+    loginBtn.onclick = ()=>openAuth("Log in");
+    signupBtn.onclick = ()=>openAuth("Sign up");
+    mobileLogin.onclick = ()=>openAuth("Log in");
+    mobileSignup.onclick = ()=>openAuth("Sign up");
+    closeModal.onclick = closeAuth;
+    authModal.addEventListener("click", e => { if(e.target === authModal) closeAuth(); });
+    demoFillBtn.onclick = () => {
+      authEmail.value = "agent@werentportal.com";
+      authPassword.value = "Demo@123";
+    };
+    authForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      authState = {
+        role: authEmail.value.includes("admin") ? "Admin" : "Agent",
+        email: authEmail.value
+      };
+      authFeedback.textContent = `Logged in successfully as ${authState.role}.`;
+      saveState();
+      renderDashboard();
+      setTimeout(closeAuth, 700);
+    });
+
+    demoLoginBtn.onclick = () => {
+      authState = {role:"Agent", email:"agent@werentportal.com"};
+      saveState(); renderDashboard(); switchPanel("overview");
+    };
+    demoAdminBtn.onclick = () => {
+      authState = {role:"Admin", email:"admin@werentportal.com"};
+      saveState(); renderDashboard(); switchPanel("admin");
+    };
+
+    document.getElementById("exportJsonBtn").onclick = () => {
+      const blob = new Blob([JSON.stringify({schema:"See schema markup in page source", listings, enquiries:sampleEnquiries}, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = "werent-sample-data.json"; a.click();
+      URL.revokeObjectURL(url);
+    };
+
+    document.getElementById("contactForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      contactFeedback.textContent = `Thanks ${cName.value.split(" ")[0] || ""}, your message has been sent. We'll respond at ${cEmail.value}.`;
+      e.target.reset();
+    });
+
+    document.getElementById("savedBtn").onclick = () => {
+      if(!saved.length){
+        alert("No saved listings yet.");
+        return;
+      }
+      const names = listings.filter(l => saved.includes(l.id)).map(l => "• " + l.title).join("\n");
+      alert("Saved listings:\n\n" + names);
+    };
+
+    document.getElementById("mobileToggle").onclick = () => {
+      document.getElementById("mobileMenu").classList.toggle("open");
+    };
+
+    document.querySelectorAll('.mobile-menu a').forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+    updateSliderUI();
+    renderListings();
+    renderDashboard();
+  </script>
+</body>
+</html>
